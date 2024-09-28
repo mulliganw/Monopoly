@@ -35,7 +35,7 @@ class Property(Tile):
 
 
 player1 = Player("Seamus", "Hat")
-
 game = Game([player1])
+
 print(player1.position)
 
