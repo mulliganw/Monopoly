@@ -2,6 +2,8 @@ import random
 import json
 import numpy as np
 import pandas as pd
+from dataclasses import dataclass
+from typing import List
 
 
 class Game:
@@ -38,34 +40,30 @@ class Tile:
         self.position = position
 
 
+@dataclass
+class Property:
+    title: str
+    price: int
+    rent_no_set: int
+    rent_color_set: int
+    rent_1_house: int
+    rent_2_house: int
+    rent_3_house: int
+    rent_4_house: int
+    rent_hotel: int
+    building_cost: int
+    mortgage: int
+    unmortgage: int
+    color: str
+
+@dataclass
 class Player:
-    def __init__(self, title, piece):
-        self.title = title
-        self.piece = piece
-        self.position = 0
-        self.money = 1500
-        self.properties = {}
+    title: str
+    piece: str
+    position: int
+    money: int
+    properties: List[Property]
 
-    def to_json(self):
-        return {
-            "title": self.title,
-            "piece": self.piece,
-            "position": self.position,
-            "money": self.money,
-            "properties": list(self.properties.keys()),
-        }
-
-
-class Property(Tile):
-    def __init__(self, title, position, price):
-        super().__init__(
-            title=title,
-            position=position
-        )
-        self.price = price
-
-    def __str__(self):
-        return str(self.title)
 
 
 """
@@ -73,16 +71,8 @@ Reads property data from csv and lets you index data by column(Type of value lik
 or row (Property name like Board Walk)
 """
 data = pd.read_csv("properties.csv", index_col=0)
-print(data.index.values[-1])
-print(data)
-player1 = Player("Seamus", "Hat")
-game = Game({player1.title: player1})
-boardwalk = Property(str(data.index.values[-1]), 39, int(data.loc[data.index.values[-1]][0]))
-game.properties.update({boardwalk.title: boardwalk})
-game.roll(player1)
-game.buy(player1, boardwalk)
-game.to_json()
-json_example = {"n": 10}
-print(player1.properties)
-print(player1.position)
-print(player1.money)
+print(data.iloc[len(data)-1])
+board = Property(data.index.values[len(data)-1], *data.iloc[len(data)-1])
+print(board)
+player1 = Player(**{"title": "Seamus", "piece": "iron", "position": 10, "money": 1700, "properties": board})
+print(player1)
