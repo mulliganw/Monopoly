@@ -1,8 +1,7 @@
 import random
 import json
-import numpy as np
 import pandas as pd
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import List
 
 
@@ -27,8 +26,9 @@ class Game:
         out = {
             "turn": self.turn
         }
-        for player in list(self.players.values()):
-            out.update(player.to_json())
+        for player in self.properties:
+            print(player.dict())
+            out.update(player.dict())
         print(out)
         with open("sample.json", "w") as outfile:
             json.dump(out, outfile)
@@ -56,6 +56,11 @@ class Property:
     unmortgage: int
     color: str
 
+    def dict(self):
+
+        return asdict(self).items()
+
+
 @dataclass
 class Player:
     title: str
@@ -64,15 +69,22 @@ class Player:
     money: int
     properties: List[Property]
 
+    #Converts dataclass to dictionary
+    def dict(self):
+        return asdict(self)
 
 
-"""
-Reads property data from csv and lets you index data by column(Type of value like price)
-or row (Property name like Board Walk)
-"""
-data = pd.read_csv("properties.csv", index_col=0)
-print(data.iloc[len(data)-1])
-board = Property(data.index.values[len(data)-1], *data.iloc[len(data)-1])
-print(board)
-player1 = Player(**{"title": "Seamus", "piece": "iron", "position": 10, "money": 1700, "properties": board})
-print(player1)
+
+def read_data(in_filename: str):
+    data = pd.read_csv(in_filename, index_col=0)
+    properties = []
+    for title in data.index.values:
+        values = [int(x) for x in data.loc[title].iloc[0: -1]]
+        properties.append(Property(title, *values, data.loc[title].iloc[-1]))
+    return properties
+
+tiles = read_data("properties.csv")
+game = Game(Player("Seamus", "dog", 10, 1500, tiles))
+game.to_json()
+
+
