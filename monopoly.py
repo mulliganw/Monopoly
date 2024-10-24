@@ -71,6 +71,7 @@ class Company:
     rent_4_owned: int 
     mortgage: int
     unmortgage: int
+    owner: int
     
     def dict(self) :
 
