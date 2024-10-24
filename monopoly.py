@@ -1,43 +1,38 @@
 import random
 import json
+from time import sleep
+
 import pandas as pd
 from dataclasses import dataclass, asdict
 from typing import List
+import pickle
 
 
 class Game:
     def __init__(self, players):
         self.grid = []
-        self.players = players
-        self.turn = 0
-        self.properties = {}
+        self.players: List[Player] = players
+        self.turn: int = 0
+        self.properties: List[Property] = []
 
-    def roll(self, player):
+    def roll(self, player_id):
         roll = random.randint(1, 6) + random.randint(1, 6)
-        self.players[player.title].position += roll
-        self.players[player.title].position %= 40
+        self.players[player_id].position += roll
+        self.players[player_id].position %= 22
 
-    def buy(self, player, property):
-        if self.players[player.title].money >= self.properties[property.title].price:
-            self.players[player.title].properties.update({property.title: self.properties[property.title]})
-            self.players[player.title].money -= self.properties[property.title].price
+    def buy(self, player_id, property_id):
+        if self.players[player_id].money >= self.properties[property_id].price:
+            self.players[player_id].properties.append(self.properties[property_id])
+            self.players[player_id].money -= self.properties[property_id].price
 
     def to_json(self):
         out = {
             "turn": self.turn
         }
         for player in self.properties:
-            print(player.dict())
             out.update(player.dict())
-        print(out)
         with open("sample.json", "w") as outfile:
             json.dump(out, outfile)
-
-
-class Tile:
-    def __init__(self, title, position):
-        self.title = title
-        self.position = position
 
 
 @dataclass
@@ -57,22 +52,21 @@ class Property:
     color: str
 
     def dict(self):
-
         return asdict(self).items()
 
 
 @dataclass
 class Player:
+    id: int
     title: str
     piece: str
     position: int
     money: int
     properties: List[Property]
 
-    #Converts dataclass to dictionary
+    # Converts dataclass to dictionary
     def dict(self):
         return asdict(self)
-
 
 
 def read_data(in_filename: str):
@@ -83,8 +77,20 @@ def read_data(in_filename: str):
         properties.append(Property(title, *values, data.loc[title].iloc[-1]))
     return properties
 
+
 tiles = read_data("properties.csv")
-game = Game(Player("Seamus", "dog", 10, 1500, tiles))
+player1 = Player(0, "Seamus", "dog", 0, 1500, [])
+player2 = Player(1, "Nickolai", "dog", 0, 1500, [])
+game = Game([player1, player2])
+game.properties = tiles
+print(len(tiles))
+
 game.to_json()
 
-
+while True:
+    for i in range(0, 2, 1):
+        game.roll(i)
+        print(game.players[i].position)
+        game.buy(i, game.players[i].position)
+        [print(str(game.players[i].properties[j])+"\n") for j in range(len(game.players[i].properties))]
+        sleep(5)
