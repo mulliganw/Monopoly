@@ -16,7 +16,9 @@ class Game:
         self.properties: List[Property] = []
 
     def roll(self, player_id):
-        roll = random.randint(1, 6) + random.randint(1, 6)
+        roll1 = random.randint(1,6)
+        roll2 = random.randint(1,6)
+        roll = roll1+roll2
         self.players[player_id].position += roll
         self.players[player_id].position %= 22
 
