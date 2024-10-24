@@ -60,6 +60,21 @@ class Property:
 
     def dict(self):
         return asdict(self).items()
+    
+@dataclass
+class Company:
+    title: str
+    price: str
+    rent_1_owned: int
+    rent_2_owned: int
+    rent_3_owned: int
+    rent_4_owned: int 
+    mortgage: int
+    unmortgage: int
+    
+    def dict(self) :
+
+        return asdict(self).items()
 
 
 @dataclass
