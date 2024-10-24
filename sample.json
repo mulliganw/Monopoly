@@ -1,1 +1,1 @@
-{"turn": 0, "title": "Seamus", "piece": "Hat", "position": 7, "money": 1100, "properties": ["Board Walk"]}
+{"turn": 0, "title": "Board Walk", "price": 400, "rent_no_set": 50, "rent_color_set": 100, "rent_1_house": 200, "rent_2_house": 600, "rent_3_house": 1400, "rent_4_house": 1700, "rent_hotel": 2000, "building_cost": 200, "mortgage": 200, "unmortgage": 220, "color": "Dark Blue", "owner": -1}
