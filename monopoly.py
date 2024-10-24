@@ -20,10 +20,15 @@ class Game:
         self.players[player_id].position += roll
         self.players[player_id].position %= 22
 
-    def buy(self, player_id, property_id):
-        if self.players[player_id].money >= self.properties[property_id].price:
-            self.players[player_id].properties.append(self.properties[property_id])
-            self.players[player_id].money -= self.properties[property_id].price
+    def buy(self, player_id):
+        player = self.players[player_id]
+        property_id = player.position
+        property = self.properties[property_id]
+        if player.money >= property.price and property.owner==-1:
+            player.properties.append(property_id)
+            player.money -= self.properties[property_id].price
+            property.owner = player_id
+
 
     def to_json(self):
         out = {
@@ -50,6 +55,8 @@ class Property:
     mortgage: int
     unmortgage: int
     color: str
+    # The owner will be the player id
+    owner: int
 
     def dict(self):
         return asdict(self).items()
@@ -62,7 +69,8 @@ class Player:
     piece: str
     position: int
     money: int
-    properties: List[Property]
+    # The player owns a list of property IDs
+    properties: List[int]
 
     # Converts dataclass to dictionary
     def dict(self):
@@ -74,7 +82,7 @@ def read_data(in_filename: str):
     properties = []
     for title in data.index.values:
         values = [int(x) for x in data.loc[title].iloc[0: -1]]
-        properties.append(Property(title, *values, data.loc[title].iloc[-1]))
+        properties.append(Property(title, *values, data.loc[title].iloc[-1], -1))
     return properties
 
 
@@ -83,14 +91,18 @@ player1 = Player(0, "Seamus", "dog", 0, 1500, [])
 player2 = Player(1, "Nickolai", "dog", 0, 1500, [])
 game = Game([player1, player2])
 game.properties = tiles
-print(len(tiles))
 
 game.to_json()
 
 while True:
-    for i in range(0, 2, 1):
-        game.roll(i)
-        print(game.players[i].position)
-        game.buy(i, game.players[i].position)
-        [print(str(game.players[i].properties[j])+"\n") for j in range(len(game.players[i].properties))]
-        sleep(5)
+    for ID in range(0, 2, 1):
+        print(game.players[ID].title)
+        game.roll(ID)
+        print(game.players[ID].position)
+        game.buy(ID)
+        for property in game.players[ID].properties:
+            print(game.properties[property])
+
+
+        print("\n\n")
+        sleep(2)
