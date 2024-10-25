@@ -72,6 +72,14 @@ class Player:
     # The player owns a list of property IDs
     properties: List[int]
 
+    def mortgage(self, property) :
+        # Make sure the player owns the property they're attempting to mortgage and that it has no houses
+        if property in self.properties and property.get('level') == 0 :
+            # Remove the property from the player's list of properties
+            self.properties.remove(property.get('id'))
+            # Give the player the mortgage money
+            self.money += property.get('mortgage')
+    
     # Converts dataclass to dictionary
     def dict(self):
         return asdict(self)
