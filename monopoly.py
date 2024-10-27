@@ -16,7 +16,9 @@ class Game:
         self.properties: List[Property] = []
 
     def roll(self, player_id):
-        roll = random.randint(1, 6) + random.randint(1, 6)
+        roll1 = random.randint(1,6)
+        roll2 = random.randint(1,6)
+        roll = roll1+roll2
         self.players[player_id].position += roll
         self.players[player_id].position %= 22
 
@@ -95,14 +97,15 @@ game.properties = tiles
 game.to_json()
 
 while True:
-    for ID in range(0, 2, 1):
-        print(game.players[ID].title)
-        game.roll(ID)
-        print(game.players[ID].position)
-        game.buy(ID)
-        for property in game.players[ID].properties:
-            print(game.properties[property])
+    ID = game.turn % len(game.players)
+    print("Turn:", game.turn)
+    print(game.players[ID].title)
+    game.roll(ID)
+    print(game.players[ID].position)
+    game.buy(ID)
+    for property in game.players[ID].properties:
+        print(game.properties[property].title)
+    game.turn += 1
 
-
-        print("\n\n")
-        sleep(2)
+    print("\n\n")
+    sleep(2)
