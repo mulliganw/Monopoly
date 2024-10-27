@@ -33,12 +33,12 @@ class Game:
 
 
     def to_json(self):
-        out = []
-        for property in self.properties:
-            out += property.dict()
-        print(out)
+        out = {
+            "turn": self.turn
+        }
+        for player in self.properties:
+            out.update(player.dict())
         with open("sample.json", "w") as outfile:
-            json.dump(turn, outfile)
             json.dump(out, outfile)
 
 
