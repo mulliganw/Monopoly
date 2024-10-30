@@ -64,7 +64,10 @@ class Property:
     def dict(self):
         return asdict(self).items()
 
-
+    # should only be called after making sure that it doesn't have any houses on it
+    def mortgage(self):
+        self.rent_no_set = 0
+        
 @dataclass
 class Player:
     id: int
@@ -78,8 +81,8 @@ class Player:
     def mortgage(self, property) :
         # Make sure the player owns the property they're attempting to mortgage and that it has no houses
         if property in self.properties and property.get('level') == 0 :
-            # Remove the property from the player's list of properties
-            self.properties.remove(property.get('id'))
+            # Mortgage the property
+            self.properties.property.mortgage()
             # Give the player the mortgage money
             self.money += property.get('mortgage')
 
