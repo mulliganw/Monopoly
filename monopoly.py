@@ -42,7 +42,6 @@ class Game:
 
 @dataclass
 class Property:
-    id: int
     title: str
     price: int
     # Level is the number of houses/hotels on a property. 0: none, 5: hotel
